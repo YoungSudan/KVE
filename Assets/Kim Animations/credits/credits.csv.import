@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://bl427vrloisfw"
+
+[deps]
+
+files=["res://Assets/Kim Animations/credits/credits.notes.translation", "res://Assets/Kim Animations/credits/credits.authors.translation", "res://Assets/Kim Animations/credits/credits.licenses.translation", "res://Assets/Kim Animations/credits/credits.urls.translation"]
+
+source_file="res://Assets/Kim Animations/credits/credits.csv"
+dest_files=["res://Assets/Kim Animations/credits/credits.notes.translation", "res://Assets/Kim Animations/credits/credits.authors.translation", "res://Assets/Kim Animations/credits/credits.licenses.translation", "res://Assets/Kim Animations/credits/credits.urls.translation"]
+
+[params]
+
+compress=true
+delimiter=0

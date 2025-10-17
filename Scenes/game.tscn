@@ -1,11 +1,11 @@
 [gd_scene load_steps=17 format=4 uid="uid://c2avqyy71xm0i"]
 
 [ext_resource type="PackedScene" uid="uid://chrb17dj0nvcm" path="res://Scenes/kim.tscn" id="1_ebmjs"]
-[ext_resource type="Texture2D" uid="uid://dpgsahhxm5awf" path="res://Assets/Pixel Art Top Down - Basic v1.2.2/Texture/TX Tileset Grass.png" id="1_qxrlw"]
-[ext_resource type="Texture2D" uid="uid://bf72x5c21nmss" path="res://Assets/Pixel Art Top Down - Basic v1.2.2/Texture/TX Plant.png" id="2_wrm1d"]
-[ext_resource type="Texture2D" uid="uid://mlfh3jwm7iq8" path="res://Assets/Pixel Art Top Down - Basic v1.2.2/Texture/TX Player.png" id="3_i6g32"]
-[ext_resource type="Texture2D" uid="uid://ddw2epmutr2lj" path="res://Assets/Pixel Art Top Down - Basic v1.2.2/Texture/TX Props.png" id="4_1l0tm"]
-[ext_resource type="Texture2D" uid="uid://bl5ram3y5cedp" path="res://Assets/Pixel Art Top Down - Basic v1.2.2/Texture/TX Struct.png" id="5_v158k"]
+[ext_resource type="Texture2D" uid="uid://dpgsahhxm5awf" path="res://Assets/Level sheets/Texture/TX Tileset Grass.png" id="1_qxrlw"]
+[ext_resource type="Texture2D" uid="uid://bf72x5c21nmss" path="res://Assets/Level sheets/Texture/TX Plant.png" id="2_wrm1d"]
+[ext_resource type="Texture2D" uid="uid://mlfh3jwm7iq8" path="res://Assets/Level sheets/Texture/TX Player.png" id="3_i6g32"]
+[ext_resource type="Texture2D" uid="uid://ddw2epmutr2lj" path="res://Assets/Level sheets/Texture/TX Props.png" id="4_1l0tm"]
+[ext_resource type="Texture2D" uid="uid://bl5ram3y5cedp" path="res://Assets/Level sheets/Texture/TX Struct.png" id="5_v158k"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wrm1d"]
 texture = ExtResource("1_qxrlw")
@@ -1510,8 +1510,8 @@ tile_set = SubResource("TileSet_3dryh")
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(576, 324)
 
-[node name="Kim" parent="." instance=ExtResource("1_ebmjs")]
-position = Vector2(70, 144)
+[node name="Kim" parent="Camera2D" instance=ExtResource("1_ebmjs")]
+position = Vector2(-475, -127)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 position = Vector2(184, 188)
