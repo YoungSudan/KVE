@@ -1,59 +1,110 @@
+# player.gd
+# Works in Godot 4.x
+# Node structure:
+# CharacterBody2D
+# └── AnimatedSprite2D
+
 extends CharacterBody2D
 
+# -------------------------------
+# 🧩 CONFIGURATION
+# -------------------------------
+const SPEED: float = 300.0
 
-const SPEED = 300.0
-const JUMP_VELOCITY = -400.0
-@onready var animated_sprite = $AnimatedSprite2D
+@onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 
-func _physics_process(_delta):
-	var input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	velocity = input_direction * SPEED
+# Whether the player is currently performing an attack animation
+var is_attacking: bool = false
+
+# Track the last movement direction (used for idle + attack)
+# We'll store it as a string ("left", "right", "up", "down")
+var last_direction: String = "Down"
+
+
+# -------------------------------
+# 🚀 READY
+# -------------------------------
+func _ready() -> void:
+	# Connect the animation_finished signal (no arguments in Godot 4)
+	animated_sprite.connect("animation_finished", Callable(self, "_on_animated_sprite_animation_finished"))
+
+
+# -------------------------------
+# 🕹️ INPUT HANDLING
+# -------------------------------
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_accept") and not is_attacking:
+		_start_attack()
+
+
+# -------------------------------
+# ⚙️ PHYSICS PROCESS
+# -------------------------------
+func _physics_process(delta: float) -> void:
+	# Prevent movement while attacking
+	if is_attacking:
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
 	
-	if velocity.length() > 0:
-		if input_direction.x < 0:
-			animated_sprite.play("Walk_Left")
-		elif input_direction.x > 0:
-			animated_sprite.play("Walk_Right")
-		elif input_direction.y < 0:
-			animated_sprite.play("Walk_Up")
-		elif input_direction.y > 0:
-			animated_sprite.play("Walk_Down")
-	else:
-		# Handle idle animations based on the last direction faced
-		# You might store the last direction in a variable
-		animated_sprite.play("Idle") # Or a more sophisticated idle based on last movement
-	
-	if Input.is_action_just_pressed("ui_accept"):
-		animated_sprite.play("Fight_right")
-	
+	# Read directional input
+	var input_dir: Vector2 = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	velocity = input_dir * SPEED
 	move_and_slide()
+	
+	# Handle walking animations
+	if input_dir.length() > 0:
+		# Determine dominant direction (horizontal vs vertical)
+		if abs(input_dir.x) > abs(input_dir.y):
+			if input_dir.x > 0:
+				last_direction = "Right"
+				animated_sprite.play("Walk_Right")
+			else:
+				last_direction = "Left"
+				animated_sprite.play("Walk_Left")
+		else:
+			if input_dir.y > 0:
+				last_direction = "Down"
+				animated_sprite.play("Walk_Down")
+			else:
+				last_direction = "Up"
+				animated_sprite.play("Walk_Up")
+	else:
+		# Idle animation based on last facing direction
+		animated_sprite.play("Idle_" + last_direction)
 
 
-#func _physics_process(delta: float) -> void:
-	## Add the gravity.
-	#if not is_on_floor():
-		#velocity += get_gravity() * delta
-#
-	## Handle jump.
-	#if Input.is_action_just_pressed("ui_accept") and is_on_floor():
-		#print("Jumping")
-		#velocity.y = JUMP_VELOCITY
-#
-	## Get the input direction and handle the movement/deceleration.
-	## As good practice, you should replace UI actions with custom gameplay actions.
-	#var direction := Input.get_axis("ui_left", "ui_right")
-	#var upDown := Input.get_axis("ui_down", "ui_up")
-	## print("Left or Right")
-	#
-	#if direction:
-		#
-		#velocity.x = direction * SPEED
-	#else:
-		#velocity.x = move_toward(velocity.x, 0, SPEED)
-	#
-	#if upDown:
-		#velocity.y = direction * SPEED
-	#else: 
-		#velocity.y = move_toward(velocity.x, 0, SPEED)
-		#
-	#move_and_slide()
+# -------------------------------
+# 💥 ATTACK LOGIC
+# -------------------------------
+func _start_attack() -> void:
+	is_attacking = true
+	velocity = Vector2.ZERO
+	move_and_slide()
+	
+	# Play the appropriate fight animation based on last facing direction
+	match last_direction:
+		"Up":
+			animated_sprite.play("Fight_Up")
+		"Down":
+			animated_sprite.play("Fight_Down")
+		"Left":
+			animated_sprite.play("Fight_Left")
+		"Right":
+			animated_sprite.play("Fight_Right")
+
+
+# -------------------------------
+# 🎬 SIGNAL HANDLER
+# -------------------------------
+func _on_animated_sprite_animation_finished() -> void:
+	# When the fight animation ends, return to the idle animation of the same direction
+	if animated_sprite.animation.begins_with("Fight_"):
+		is_attacking = false
+		animated_sprite.play("Idle_" + last_direction)
+		animated_sprite.frame = 0
+		
+	if animated_sprite.animation.begins_with("Idle_"):
+		is_attacking = false
+		animated_sprite.play("Idle_" + last_direction)
+		animated_sprite.frame = 0
